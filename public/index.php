@@ -5,6 +5,7 @@ require_once '../src/modelo/Banco.php';
 require_once '../src/modelo/Cliente.php';
 require_once '../src/modelo/Cuenta.php';
 require_once '../src/modelo/TipoCuenta.php';
+require_once '../src/modelo/TipoOperacion.php';
 
 $banco = new Banco("Midas");
 
@@ -19,7 +20,6 @@ $datosClientes = [
     ['dni' => '34567890C', 'nombre' => 'Carlos', 'apellido1' => 'Fernández', 'apellido2' => 'González', 'telefono' => '112233445', 'fechaNacimiento' => '1990-03-03']
 ];
 
-
 // Crear tres clientes y agregar tres cuentas a cada uno
 foreach ($datosClientes as $datosCliente) {
     $banco->altaCliente($datosCliente['dni'], $datosCliente['nombre'], $datosCliente['apellido1'], $datosCliente['apellido2'], $datosCliente['telefono'], $datosCliente['fechaNacimiento']);
@@ -31,8 +31,6 @@ foreach ($datosClientes as $datosCliente) {
         // Realizar tres operaciones de ingreso en las cada cuenta
         for ($j = 0; $j < 3; $j++) {
             $tipoOperacion = rand(0, 1) ? TipoOperacion::INGRESO : TipoOperacion::DEBITO;
-            $cantidad = rand(0, 500);
-            $banco->ingresoCuentaCliente($datosCliente['dni'], $idCuenta, $cantidad, "Ingreso de $cantidad € en la cuenta");
             $cantidad = rand(0, 500);
             try {
                 if ($tipoOperacion === TipoOperacion::INGRESO) {
@@ -47,12 +45,16 @@ foreach ($datosClientes as $datosCliente) {
     }
 }
 
-$banco->aplicaComisionCC();
+try {
+    $banco->aplicaComisionCC();
+    $banco->aplicaInteresCA();
+} catch (Excepcion $ex) {
+    echo $ex->getMessage() . "</br>";
+}
 
-$banco->aplicaInteresCA();
 
 try {
-    $banco->realizaTransferencia('12345678A', '23456789B', ($banco->getCliente('12345678A')->getIdCuentas())[1], ($banco->getCliente('23456789B')->getIdCuentas())[0], 500);
+    $banco->realizaTransferencia('12345678A', '23456789B', ($banco->obtenerCliente('12345678A')->getIdCuentas())[1], ($banco->obtenerCliente('23456789B')->getIdCuentas())[0], 500);
 } catch (SaldoInsuficienteException $ex) {
     echo $ex->getMessage();
 }
@@ -71,7 +73,7 @@ foreach ($clientes as $dniCliente => $cliente) {
     echo "</br>";
 }
 
-$banco->bajaCuentaCliente('12345678A', ($banco->getCliente('12345678A')->getIdCuentas())[0]);
+$banco->bajaCuentaCliente('12345678A', ($banco->obtenerCliente('12345678A')->getIdCuentas())[0]);
 $banco->bajaCliente('34567890C');
 
 echo "<h1>Clientes y cuentas del banco (baja de una cuenta y un cliente)</h1>";
