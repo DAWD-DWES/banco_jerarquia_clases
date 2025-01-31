@@ -1,6 +1,6 @@
 <?php
 
-require_once "Cuenta.php";
+require_once "../src/modelo/Cuenta.php";
 
 /**
  * Clase CuentaAhorros 
@@ -18,6 +18,22 @@ class CuentaAhorros extends Cuenta {
     public function ingreso(float $cantidad, string $descripcion, float $bonificacion = 0): void {
         $cantidadBonificada = $cantidad * (1 + ($bonificacion / 100));
         parent::ingreso($cantidadBonificada, $descripcion);
+    }
+    
+    /**
+     * 
+     * @param type $cantidad Cantidad de dinero a retirar
+     * @param type $descripcion Descripcion del debito
+     * @throws SaldoInsuficienteException
+     */
+    public function debito(float $cantidad, string $descripcion): void {
+        if ($cantidad <= $this->getSaldo()) {
+            $operacion = new Operacion(TipoOperacion::DEBITO, $cantidad, $descripcion);
+            $this->agregaOperacion($operacion);
+            $this->setSaldo($this->getSaldo() - $cantidad);
+        } else {
+            throw new SaldoInsuficienteException($this->getId());
+        }
     }
 
     public function getLibreta(): bool {

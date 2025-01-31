@@ -1,10 +1,10 @@
 <?php
 
-require_once "Cliente.php";
-require_once "Cuenta.php";
-require_once "CuentaCorriente.php";
-require_once "CuentaAhorros.php";
-require_once "TipoCuenta.php";
+require_once "../src/modelo/Cliente.php";
+require_once "../src/modelo/Cuenta.php";
+require_once "../src/modelo/CuentaCorriente.php";
+require_once "../src/modelo/CuentaAhorros.php";
+require_once "../src/modelo/TipoCuenta.php";
 require_once "../src/excepciones/ClienteNoEncontradoException.php";
 require_once "../src/excepciones/CuentaNoEncontradaException.php";
 
@@ -30,7 +30,7 @@ class Banco {
      * @var float
      */
     private float $interesCA = 0;
-    
+
     /**
      * Interés de la cuenta de ahorros en porcentaje
      * @var float
@@ -250,14 +250,13 @@ class Banco {
     public function getInteresCA(): float {
         return $this->interesCA;
     }
-    
+
     /**
      * Obtiene la bonificacion de cuenta de ahorroa
      * 
      * @return float
      */
-    
-     public function getBonificacionCA(): float {
+    public function getBonificacionCA(): float {
         return $this->bonificacionCA;
     }
 
@@ -288,19 +287,16 @@ class Banco {
     public function setInteresCA(float $interesCA): void {
         $this->interesCA = $interesCA;
     }
-    
 
     /**
      * Establece la bonificacion de la cuenta de ahorros del banco
      * 
      * @param float $bonificacionCA Interés del banco
      */
-    
     public function setBonificacionCA(float $bonificacionCA): void {
         $this->bonificacionCA = $bonificacionCA;
     }
 
-    
     /**
      * Realiza un alta de cliente del banco
      * 
@@ -433,10 +429,14 @@ class Banco {
      * @param string $descripcion
      */
     public function debitoCuentaCliente(string $dni, string $idCuenta, float $cantidad, string $descripcion) {
-        $cliente = $this->getCliente($dni);
-        if ($cliente->existeIdCuenta($idCuenta)) {
-            $cuenta = $this->getCuenta($idCuenta);
-            $cuenta->debito($cantidad, $descripcion);
+        try {
+            $cliente = $this->getCliente($dni);
+            if ($cliente->existeIdCuenta($idCuenta)) {
+                $cuenta = $this->getCuenta($idCuenta);
+                $cuenta->debito($cantidad, $descripcion);
+            }
+        } catch (Exception $ex) {
+            echo $ex->getMessage(). "</br>";
         }
     }
 

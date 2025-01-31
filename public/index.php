@@ -9,10 +9,6 @@ require_once '../src/modelo/TipoOperacion.php';
 
 $banco = new Banco("Midas", [3, 1000], [1.5, 0.5]);
 
-/* $banco->setComisionCC(5);
-$banco->setMinSaldoComisionCC(1000);
-$banco->setInteresCA(1.5); */
-
 // Datos de clientes de ejemplo
 $datosClientes = [
     ['dni' => '12345678A', 'nombre' => 'Juan', 'apellido1' => 'Pérez', 'apellido2' => 'López', 'telefono' => '123456789', 'fechaNacimiento' => '1980-01-01'],
