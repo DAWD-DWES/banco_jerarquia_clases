@@ -30,6 +30,12 @@ class Banco {
      * @var float
      */
     private float $interesCA = 0;
+    
+    /**
+     * Interés de la cuenta de ahorros en porcentaje
+     * @var float
+     */
+    private float $bonificacionCA = 0;
 
     /**
      * Nombre del banco
@@ -54,8 +60,12 @@ class Banco {
      * 
      * @param string $nombre Nombre del banco
      */
-    public function __construct(string $nombre) {
-        $this->setNombre($nombre);
+    public function __construct(...$args) {
+        $this->setNombre($args[0] ?? "Desconocido");
+        $this->setComisionCC($args[1][0] ?? 0);
+        $this->setMinSaldoComisionCC($args[1][1] ?? 0);
+        $this->setInteresCA($args[2][0] ?? 0);
+        $this->setBonificacionCA($args[2][1] ?? 0);
         $this->setClientes();
         $this->setCuentas();
     }
@@ -217,7 +227,7 @@ class Banco {
     /**
      * Obtiene la comisión del banco
      * 
-     * @return string
+     * @return float
      */
     public function getComisionCC(): float {
         return $this->comisionCC;
@@ -226,7 +236,7 @@ class Banco {
     /**
      * Obtiene el mínimo saldo sin comisión
      * 
-     * @return string
+     * @return float
      */
     public function getMinSaldoComisionCC(): float {
         return $this->minSaldoComisionCC;
@@ -235,19 +245,28 @@ class Banco {
     /**
      * Obtiene el interés del banco
      * 
-     * @return string
+     * @return float
      */
     public function getInteresCA(): float {
         return $this->interesCA;
+    }
+    
+    /**
+     * Obtiene la bonificacion de cuenta de ahorroa
+     * 
+     * @return float
+     */
+    
+     public function getBonificacionCA(): float {
+        return $this->bonificacionCA;
     }
 
     /**
      * Establece la comision de cuenta corriente del banco
      * 
      * @param float $comisionCC Comisión del banco
-     * @return $this
      */
-    public function setComisionCC(float $comisionCC) {
+    public function setComisionCC(float $comisionCC): void {
         $this->comisionCC = $comisionCC;
     }
 
@@ -255,9 +274,8 @@ class Banco {
      * Establece el mínimo saldo para no pagar comisión
      * 
      * @param float $minSaldoComisionCC mínimo saldo sin comisión
-     * @return $this
      */
-    public function setMinSaldoComisionCC(float $minSaldoComisionCC) {
+    public function setMinSaldoComisionCC(float $minSaldoComisionCC): void {
         $this->minSaldoComisionCC = $minSaldoComisionCC;
     }
 
@@ -267,10 +285,22 @@ class Banco {
      * @param float $interesCA Interés del banco
      * @return $this
      */
-    public function setInteresCA(float $interesCA) {
+    public function setInteresCA(float $interesCA): void {
         $this->interesCA = $interesCA;
     }
+    
 
+    /**
+     * Establece la bonificacion de la cuenta de ahorros del banco
+     * 
+     * @param float $bonificacionCA Interés del banco
+     */
+    
+    public function setBonificacionCA(float $bonificacionCA): void {
+        $this->bonificacionCA = $bonificacionCA;
+    }
+
+    
     /**
      * Realiza un alta de cliente del banco
      * 
@@ -323,18 +353,28 @@ class Banco {
     }
 
     /**
-     * Crea una cuenta de un cliente del banco
+     * Crea una cuenta corriente de un cliente del banco
      * 
      * @param string $dni
      * @param float $saldo
      */
-    public function altaCuentaCliente(string $dni, float $saldo = 0, TipoCuenta $tipo = TipoCuenta::CORRIENTE): string {
+    public function altaCuentaCorrienteCliente(string $dni, float $saldo = 0): string {
         $cliente = $this->getCliente($dni);
-        if ($tipo == TipoCuenta::CORRIENTE) {
-            $cuenta = new CuentaCorriente($dni, $saldo);
-        } elseif ($tipo == TipoCuenta::AHORROS) {
-            $cuenta = new CuentaAhorros($dni, $saldo);
-        }
+        $cuenta = new CuentaCorriente($dni, $saldo);
+        $this->agregaCuenta($cuenta);
+        $cliente->altaCuenta($cuenta->getId());
+        return $cuenta->getId();
+    }
+
+    /**
+     * Crea una cuenta de ahorros de un cliente del banco
+     * 
+     * @param string $dni
+     * @param float $saldo
+     */
+    public function altaCuentaAhorrosCliente(string $dni, float $saldo = 0, bool $libreta = false): string {
+        $cliente = $this->getCliente($dni);
+        $cuenta = new CuentaAhorros($dni, $saldo, $this->getBonificacionCA(), $libreta);
         $this->agregaCuenta($cuenta);
         $cliente->altaCuenta($cuenta->getId());
         return $cuenta->getId();
@@ -376,7 +416,11 @@ class Banco {
         $cliente = $this->getCliente($dni);
         if ($cliente->existeIdCuenta($idCuenta)) {
             $cuenta = $this->getCuenta($idCuenta);
-            $cuenta->ingreso($cantidad, $descripcion);
+            if ($cuenta instanceof CuentaAhorros) {
+                $cuenta->ingreso($cantidad, $descripcion, $this->getBonificacionCA());
+            } else {
+                $cuenta->ingreso($cantidad, $descripcion);
+            }
         }
     }
 

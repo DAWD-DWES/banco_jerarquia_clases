@@ -50,7 +50,7 @@ class Cuenta {
     }
 
     public function getIdCliente(): string {
-        return $this->id;
+        return $this->idCliente;
     }
 
     public function getOperaciones(): array {
@@ -112,8 +112,9 @@ class Cuenta {
 
         return "Cuenta ID: {$this->getId()}</br>" .
                 "Tipo Cuenta: " . get_class($this) . "</br>" .
-                // "Cliente ID: {$this->getIdCliente()}</br>" .
+                "Cliente ID: {$this->getIdCliente()}</br>" .
                 "Saldo: $saldoFormatted</br>" .
+                "Operaciones: </br>" .
                 "$operacionesStr";
     }
 
