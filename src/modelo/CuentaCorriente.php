@@ -8,8 +8,8 @@ require_once "../src/modelo/TipoCuenta.php";
  */
 class CuentaCorriente extends Cuenta {
 
-    public function __construct(string $idCliente, float $saldo = 0) {
-        parent::__construct($idCliente, TipoCuenta::CORRIENTE, $saldo);
+    public function __construct(string $idCliente) {
+        parent::__construct($idCliente, TipoCuenta::CORRIENTE);
     }
 
     public function aplicaComision($comision, $minSaldo): void {

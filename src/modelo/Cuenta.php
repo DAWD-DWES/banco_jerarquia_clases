@@ -45,13 +45,12 @@ abstract class Cuenta {
      */
     private array $operaciones;
 
-    public function __construct(string $idCliente, TipoCuenta $tipo, float $cantidad = 0) {
+    public function __construct(string $idCliente, TipoCuenta $tipo,) {
         $this->setId(uniqid());
         $this->setSaldo(0);
         $this->setOperaciones([]);
         $this->setFechaCreacion(new DateTime('now'));
         $this->tipo = $tipo;
-        $this->ingreso($cantidad, "Ingreso inicial de $cantidad € en la cuenta");
         $this->setIdCliente($idCliente);
     }
 
