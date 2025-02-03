@@ -22,6 +22,12 @@ abstract class Cuenta {
     private float $saldo;
     
     /**
+     * Tipo de la cuenta
+     * @var TipoCuenta
+     */
+    private TipoCuenta $tipo;
+    
+    /**
      * Timestamp de Fecha y hora de creación de la cuenta
      * @var DateTime
      */
@@ -39,11 +45,12 @@ abstract class Cuenta {
      */
     private array $operaciones;
 
-    public function __construct(string $idCliente, float $cantidad = 0) {
+    public function __construct(string $idCliente, TipoCuenta $tipo, float $cantidad = 0) {
         $this->setId(uniqid());
         $this->setSaldo(0);
         $this->setOperaciones([]);
         $this->setFechaCreacion(new DateTime('now'));
+        $this->tipo = $tipo;
         $this->ingreso($cantidad, "Ingreso inicial de $cantidad € en la cuenta");
         $this->setIdCliente($idCliente);
     }
@@ -68,7 +75,12 @@ abstract class Cuenta {
         return $this->fechaCreacion;
     }
     
-    public function setId(string $id) {
+    function getTipo(): TipoCuenta {
+        return $this->tipo;
+    }
+
+
+        public function setId(string $id) {
         $this->id = $id;
     }
 
@@ -84,8 +96,8 @@ abstract class Cuenta {
         $this->idCliente = $idCliente;
     }
 
-    public function setTipoCuenta(TipoCuenta $tipoCuenta) {
-        $this->tipoCuenta = $tipoCuenta;
+    public function setTipo(TipoCuenta $tipo) {
+        $this->tipo = $tipo;
     }
 
     public function setOperaciones(array $operaciones) {
