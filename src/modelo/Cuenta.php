@@ -20,6 +20,12 @@ abstract class Cuenta {
      * @var float
      */
     private float $saldo;
+    
+    /**
+     * Timestamp de Fecha y hora de creación de la cuenta
+     * @var DateTime
+     */
+    private DateTime $fechaCreacion;
 
     /**
      * Id del cliente dueño de la cuenta
@@ -37,6 +43,7 @@ abstract class Cuenta {
         $this->setId(uniqid());
         $this->setSaldo(0);
         $this->setOperaciones([]);
+        $this->setFechaCreacion(new DateTime('now'));
         $this->ingreso($cantidad, "Ingreso inicial de $cantidad € en la cuenta");
         $this->setIdCliente($idCliente);
     }
@@ -56,13 +63,21 @@ abstract class Cuenta {
     public function getOperaciones(): array {
         return $this->operaciones;
     }
-
+    
+    function getFechaCreacion(): DateTime {
+        return $this->fechaCreacion;
+    }
+    
     public function setId(string $id) {
         $this->id = $id;
     }
 
     public function setSaldo(float $saldo) {
         $this->saldo = $saldo;
+    }
+    
+    function setFechaCreacion(DateTime $fechaCreacion): void {
+        $this->fechaCreacion = $fechaCreacion;
     }
 
     public function setIdCliente(string $idCliente) {
@@ -106,7 +121,7 @@ abstract class Cuenta {
                 "Tipo Cuenta: " . get_class($this) . "</br>" .
                 "Cliente ID: {$this->getIdCliente()}</br>" .
                 "Saldo: $saldoFormatted</br>" .
-                "Operaciones: </br>" .
+                "Fecha Creación: {$this->getFechaCreacion()->format('Y-m-d')}</br>" .
                 "$operacionesStr";
     }
 

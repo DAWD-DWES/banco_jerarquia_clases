@@ -336,7 +336,7 @@ class Banco {
      * @throws ClienteNoEncontradoException
      */
     public function obtenerCliente(string $dni): Cliente {
-        return unserialize(serialize($this->getCliente($dni)));
+        return clone($this->getCliente($dni));
     }
 
     /**
@@ -345,7 +345,7 @@ class Banco {
      * @return array
      */
     public function obtenerClientes(): array {
-        return unserialize(serialize($this->clientes));
+        return array_map (fn ($cliente) => clone($cliente), $this->getClientes());
     }
 
     /**
