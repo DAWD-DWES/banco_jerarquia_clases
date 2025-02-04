@@ -20,13 +20,13 @@ abstract class Cuenta {
      * @var float
      */
     private float $saldo;
-    
+
     /**
      * Tipo de la cuenta
      * @var TipoCuenta
      */
     private TipoCuenta $tipo;
-    
+
     /**
      * Timestamp de Fecha y hora de creación de la cuenta
      * @var DateTime
@@ -54,6 +54,10 @@ abstract class Cuenta {
         $this->setIdCliente($idCliente);
     }
 
+    public function __clone() {
+        $this->setOperaciones(array_map(fn($operacion) => clone ($operacion), $this->getOperaciones()));
+    }
+
     public function getId(): string {
         return $this->id;
     }
@@ -66,27 +70,26 @@ abstract class Cuenta {
         return $this->idCliente;
     }
 
-    public function getOperaciones(): array {
+    private function getOperaciones(): array {
         return $this->operaciones;
     }
-    
+
     function getFechaCreacion(): DateTime {
         return $this->fechaCreacion;
     }
-    
+
     function getTipo(): TipoCuenta {
         return $this->tipo;
     }
 
-
-        public function setId(string $id) {
+    public function setId(string $id) {
         $this->id = $id;
     }
 
     public function setSaldo(float $saldo) {
         $this->saldo = $saldo;
     }
-    
+
     function setFechaCreacion(DateTime $fechaCreacion): void {
         $this->fechaCreacion = $fechaCreacion;
     }
@@ -99,9 +102,14 @@ abstract class Cuenta {
         $this->tipo = $tipo;
     }
 
-    public function setOperaciones(array $operaciones) {
+    private function setOperaciones(array $operaciones) {
         $this->operaciones = $operaciones;
     }
+    
+    public function obtenerOperaciones(): array {
+        return array_map(fn($operacion) => clone ($operacion), $this->getOperaciones());
+    }
+
 
     /**
      * Ingreso de una cantidad en una cuenta

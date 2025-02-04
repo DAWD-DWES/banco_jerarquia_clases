@@ -133,7 +133,7 @@ class Banco {
      * Elimina un cliente de la lista de clientes del banco
      * @param string $dni
      */
-    private function eliminaCliente(string $dni) {
+    private function eliminaCliente(string $dni): void {
         unset($this->clientes[$dni]);
     }
 
@@ -141,7 +141,7 @@ class Banco {
      * Añade un clientes a la lista de clientes del banco
      * @param Cliente $cliente
      */
-    private function agregaCliente(Cliente $cliente) {
+    private function agregaCliente(Cliente $cliente): void {
         $this->clientes[$cliente->getDni()] = $cliente;
     }
 
@@ -177,7 +177,7 @@ class Banco {
      * Elimina una cuenta de la lista de cuentas del banco
      * @param string $idCuenta
      */
-    private function eliminaCuenta(string $idCuenta) {
+    private function eliminaCuenta(string $idCuenta): void {
         unset($this->cuentas[$idCuenta]);
     }
 
@@ -185,7 +185,7 @@ class Banco {
      * Añade una cuenta a la lista de cuentas del banco
      * @param Cuenta $cuenta
      */
-    private function agregaCuenta(Cuenta $cuenta) {
+    private function agregaCuenta(Cuenta $cuenta): void {
         $this->cuentas[$cuenta->getId()] = $cuenta;
     }
 
@@ -214,7 +214,6 @@ class Banco {
             throw new CuentaNoEncontradaException($idCuenta);
         }
     }
-
 
     /**
      * Obtiene la comisión del banco
@@ -310,7 +309,7 @@ class Banco {
      * 
      * @param string $dni
      */
-    public function bajaCliente(string $dni) {
+    public function bajaCliente(string $dni): void {
         $cliente = $this->getCliente($dni);
         $cuentas = $cliente->getIdCuentas();
         $cliente->setIdCuentas([]);
@@ -346,9 +345,9 @@ class Banco {
      * @param string $dni
      * @param float $saldo
      */
-    public function altaCuentaCorrienteCliente(string $dni, float $saldo = 0): string {
+    public function altaCuentaCorrienteCliente(string $dni): string {
         $cliente = $this->getCliente($dni);
-        $cuenta = new CuentaCorriente($dni, $saldo);
+        $cuenta = new CuentaCorriente($dni);
         $this->agregaCuenta($cuenta);
         $cliente->altaCuenta($cuenta->getId());
         return $cuenta->getId();
@@ -360,9 +359,9 @@ class Banco {
      * @param string $dni
      * @param float $saldo
      */
-    public function altaCuentaAhorrosCliente(string $dni, float $saldo = 0, bool $libreta = false): string {
+    public function altaCuentaAhorrosCliente(string $dni, bool $libreta = false): string {
         $cliente = $this->getCliente($dni);
-        $cuenta = new CuentaAhorros($dni, $saldo, $this->getBonificacionCA(), $libreta);
+        $cuenta = new CuentaAhorros($dni, $this->getBonificacionCA(), $libreta);
         $this->agregaCuenta($cuenta);
         $cliente->altaCuenta($cuenta->getId());
         return $cuenta->getId();
@@ -374,14 +373,11 @@ class Banco {
      * @param string $dni
      * @param string $idCuenta
      */
-    public function bajaCuentaCliente(string $dni, string $idCuenta) {
+    public function bajaCuentaCliente(string $dni, string $idCuenta): void {
         $cliente = $this->getCliente($dni);
         if ($cliente->existeIdCuenta($idCuenta)) {
             $this->eliminaCuenta($idCuenta);
             $cliente->bajaCuenta($idCuenta);
-        }
-        else {
-            throw new CuentaNoPerteneceClienteException($dni, $idCuenta);
         }
     }
 
@@ -392,13 +388,9 @@ class Banco {
      * @return type
      */
     public function obtenerCuenta(string $idCuenta): Cuenta {
-        $cuenta = $this->getCuenta($idCuenta);
-        $operacionesClone = array_map (fn($operacion) => clone($operacion), $cuenta->getOperaciones());
-        $cuentaClone = clone($cuenta);
-        $cuentaClone->setOperaciones($operacionesClone);
-        return ($cuentaClone);
+        return clone($this->getCuenta($idCuenta));
     }
-    
+
     /**
      * Obtiene las cuentas del banco (como array de copias de la colección)
      * 
@@ -425,8 +417,6 @@ class Banco {
             } else {
                 $cuenta->ingreso($cantidad, $descripcion);
             }
-        } else {
-            throw new CuentaNoPerteneceClienteException($dni, $idCuenta);
         }
     }
 
@@ -438,13 +428,11 @@ class Banco {
      * @param float $cantidad
      * @param string $descripcion
      */
-    public function debitoCuentaCliente(string $dni, string $idCuenta, float $cantidad, string $descripcion) {
+    public function debitoCuentaCliente(string $dni, string $idCuenta, float $cantidad, string $descripcion): void {
         $cliente = $this->getCliente($dni);
         if ($cliente->existeIdCuenta($idCuenta)) {
             $cuenta = $this->getCuenta($idCuenta);
             $cuenta->debito($cantidad, $descripcion);
-        } else {
-            throw new CuentaNoPerteneceClienteException($dni, $idCuenta);
         }
     }
 
