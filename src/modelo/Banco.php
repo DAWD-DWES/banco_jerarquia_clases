@@ -357,7 +357,7 @@ class Banco {
      * Crea una cuenta de ahorros de un cliente del banco
      * 
      * @param string $dni
-     * @param float $saldo
+     * @param float libreta
      */
     public function altaCuentaAhorrosCliente(string $dni, bool $libreta = false): string {
         $cliente = $this->getCliente($dni);
@@ -412,11 +412,7 @@ class Banco {
         $cliente = $this->getCliente($dni);
         if ($cliente->existeIdCuenta($idCuenta)) {
             $cuenta = $this->getCuenta($idCuenta);
-            if ($cuenta instanceof CuentaAhorros) {
-                $cuenta->ingreso($cantidad, $descripcion, $this->getBonificacionCA());
-            } else {
-                $cuenta->ingreso($cantidad, $descripcion);
-            }
+            $cuenta->ingreso($cantidad, $descripcion);
         }
     }
 
