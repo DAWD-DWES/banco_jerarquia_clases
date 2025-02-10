@@ -74,11 +74,11 @@ abstract class Cuenta {
         return $this->operaciones;
     }
 
-    function getFechaCreacion(): DateTime {
+    public function getFechaCreacion(): DateTime {
         return $this->fechaCreacion;
     }
 
-    function getTipo(): TipoCuenta {
+    public function getTipo(): TipoCuenta {
         return $this->tipo;
     }
 
@@ -90,7 +90,7 @@ abstract class Cuenta {
         $this->saldo = $saldo;
     }
 
-    function setFechaCreacion(DateTime $fechaCreacion): void {
+    public function setFechaCreacion(DateTime $fechaCreacion): void {
         $this->fechaCreacion = $fechaCreacion;
     }
 

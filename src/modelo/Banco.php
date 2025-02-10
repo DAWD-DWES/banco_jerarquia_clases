@@ -103,7 +103,7 @@ class Banco {
      * @param string $nombre Nombre del banco
      * @return $this
      */
-    public function setNombre(string $nombre) {
+    public function setNombre(string $nombre): void {
         $this->nombre = $nombre;
     }
 
@@ -113,7 +113,7 @@ class Banco {
      * @param array $clientes Colección de clientes del banco
      * @return $this
      */
-    public function setClientes(array $clientes = []) {
+    public function setClientes(array $clientes = []): void {
         $this->clientes = $clientes;
     }
 
@@ -123,7 +123,7 @@ class Banco {
      * @param array $cuentas Colección de cuentas del banco
      * @return $this
      */
-    public function setCuentas(array $cuentas = []) {
+    public function setCuentas(array $cuentas = []): void {
         $this->cuentas = $cuentas;
     }
 
@@ -299,7 +299,7 @@ class Banco {
      * @param DateTime $fechaNacimiento
      * @return bool
      */
-    public function altaCliente(string $dni, string $nombre, string $apellido1, string $apellido2, string $telefono, string $fechaNacimiento) {
+    public function altaCliente(string $dni, string $nombre, string $apellido1, string $apellido2, string $telefono, string $fechaNacimiento): void {
         $cliente = new Cliente($dni, $nombre, $apellido1, $apellido2, $telefono, $fechaNacimiento);
         $this->agregaCliente($cliente);
     }
@@ -408,7 +408,7 @@ class Banco {
      * @param float $cantidad
      * @param string $descripcion
      */
-    public function ingresoCuentaCliente(string $dni, string $idCuenta, float $cantidad, string $descripcion) {
+    public function ingresoCuentaCliente(string $dni, string $idCuenta, float $cantidad, string $descripcion): void {
         $cliente = $this->getCliente($dni);
         if ($cliente->existeIdCuenta($idCuenta)) {
             $cuenta = $this->getCuenta($idCuenta);
@@ -441,7 +441,7 @@ class Banco {
      * @param string $idCuentaDestino
      * @param float $cantidad
      */
-    public function realizaTransferencia(string $dniClienteOrigen, string $dniClienteDestino, string $idCuentaOrigen, string $idCuentaDestino, float $cantidad) {
+    public function realizaTransferencia(string $dniClienteOrigen, string $dniClienteDestino, string $idCuentaOrigen, string $idCuentaDestino, float $cantidad): void {
         $clienteOrigen = $this->getCliente($dniClienteOrigen);
         $clienteDestino = $this->getCliente($dniClienteDestino);
         if ($clienteOrigen->existeIdCuenta($idCuentaOrigen) && $clienteDestino->existeIdCuenta($idCuentaDestino)) {
@@ -453,7 +453,7 @@ class Banco {
     /**
      * Aplica cargos de comisión a la cuenta corriente
      */
-    public function aplicaComisionCC() {
+    public function aplicaComisionCC(): void {
         $cuentasCorrientes = array_filter($this->getCuentas(), fn($cuenta) => $cuenta instanceof CuentaCorriente);
 
         // Captura las propiedades necesarias con 'use'
@@ -468,7 +468,7 @@ class Banco {
     /**
      * Aplica intereses a la cuenta de ahorros
      */
-    public function aplicaInteresCA() {
+    public function aplicaInteresCA(): void {
         $cuentasAhorros = array_filter($this->getCuentas(), fn($cuenta) => $cuenta instanceof CuentaAhorros);
         // Captura las propiedades necesarias con 'use'
         $interesCA = $this->getInteresCA();
